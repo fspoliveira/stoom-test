@@ -2,7 +2,7 @@ package br.com.stoom.google.service;
 
 import br.com.stoom.configuration.GoogleGeocodingApiProperties;
 import br.com.stoom.entity.Address;
-import br.com.stoom.exception.InvalidAddressInformation;
+import br.com.stoom.exception.GoogleApiInvalidAddressInformation;
 import br.com.stoom.google.service.model.GeocodingResponse;
 import br.com.stoom.google.service.model.Geometry;
 import br.com.stoom.google.service.model.Result;
@@ -59,7 +59,7 @@ public class LatitudeLongitudeService {
         ResponseEntity<GeocodingResponse> geocodingResponseEntity =
             restTemplate.getForEntity(buildUri(formatedAddress), GeocodingResponse.class);
         if (geocodingResponseEntity.getStatusCode().isError()) {
-            throw new InvalidAddressInformation();
+            throw new GoogleApiInvalidAddressInformation();
         }
         return geocodingResponseEntity.getBody();
     }

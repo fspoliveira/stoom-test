@@ -2,7 +2,7 @@ package br.com.stoom.google.service;
 
 import br.com.stoom.configuration.GoogleGeocodingApiProperties;
 import br.com.stoom.entity.Address;
-import br.com.stoom.exception.InvalidAddressInformation;
+import br.com.stoom.exception.GoogleApiInvalidAddressInformation;
 import br.com.stoom.google.service.model.GeocodingResponse;
 import br.com.stoom.google.service.model.Geometry;
 import br.com.stoom.google.service.model.Location;
@@ -53,7 +53,7 @@ class LatitudeLongitudeServiceTest {
             GeocodingResponse.class)).thenReturn(ResponseEntity.badRequest().build());
         // When I
         // Then
-        assertThatExceptionOfType(InvalidAddressInformation.class).isThrownBy(() -> service.findLatitudeAndLongitude(
+        assertThatExceptionOfType(GoogleApiInvalidAddressInformation.class).isThrownBy(() -> service.findLatitudeAndLongitude(
             aRealAddress()));
     }
 

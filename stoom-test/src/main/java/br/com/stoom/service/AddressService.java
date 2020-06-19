@@ -1,7 +1,7 @@
 package br.com.stoom.service;
 
 import br.com.stoom.entity.Address;
-import br.com.stoom.exception.AddressNotFoundException;
+import br.com.stoom.exception.AddressNotFoundInDatabaseException;
 import br.com.stoom.google.service.LatitudeLongitudeService;
 import br.com.stoom.repository.AddressRepository;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class AddressService {
     }
 
     public Address findById(UUID id) {
-        return repository.findById(id).orElseThrow(AddressNotFoundException::new);
+        return repository.findById(id).orElseThrow(AddressNotFoundInDatabaseException::new);
     }
 
     public List<Address> findAll() {
@@ -45,7 +45,7 @@ public class AddressService {
 
     public Address update(Address address) {
         log.debug("Updating {}", address);
-        repository.findById(address.getId()).orElseThrow(AddressNotFoundException::new);
+        repository.findById(address.getId()).orElseThrow(AddressNotFoundInDatabaseException::new);
         return repository.save(handleLatitudeAndLongitude(address));
     }
 
