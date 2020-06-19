@@ -4,8 +4,11 @@ import br.com.stoom.configuration.PostgresDatabaseContainer;
 import br.com.stoom.configuration.RedisContainer;
 import br.com.stoom.entity.Address;
 import br.com.stoom.fixtures.AddressFixture;
+import br.com.stoom.model.AddressModel;
 import br.com.stoom.repository.AddressRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,13 +55,19 @@ class AddressControllerIntegrationTest {
     public void whenIQueryForAllAddresses_thenItShouldReturnAllDataInAddressTable() throws Exception {
         // Set up
         Address address = AddressFixture.createSimpleData(repository);
-        // Given a simple get
+        // Given a simple GET request
         String responseBody = mockMvc.perform(get("/api/address").contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
-        objectMapper.readValue(responseBody, AddressModel.class);
+        // Then it should return
+        List<AddressModel> addressModel = objectMapper.readValue(responseBody, new TypeReference<List<AddressModel>>() {
+        });
+        assertThat(addressModel)
+            .hasSize(1)
+            .extracting(AddressModel::getCity, AddressModel::getLatitude, AddressModel::getLongitude)
+            .contains(tuple("Some City", "-22.877083", "-47.048379"));
     }
 
 }
