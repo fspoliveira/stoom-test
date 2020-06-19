@@ -13,15 +13,21 @@ Como executar:
 
 ## Decisões técnicas e _Trade Offs_
 
+#### 
+
 #### Spring Data JPA vs JDBC Template
 Embora ambos sejam fáceis de configurar com o Spring, e o JDBC Template seja mais rápido no que diz respeito a performance o volume de código para criar um simples CRUD com o JDBC Template seria maior, também deixaria a aplicação mais acoplada à um único banco de dados.
 Desse modo, o Spring Data JPA foi escolhido. 
 
 #### Liquibase como gerenciador de DB:
+**Pros**
+
 Os motivos da escolha do Liquibase foram dois:
 - Ele ser agnostico ao banco, de modo que, para desenvolvimento utilizei o Postgres mas, para utilizar outro DB bastaria mudar as configurações do JPA e adicionar o driver do novo banco que as migrações também ocorreriam. Deixando, assim, a aplicação o mais próximo de um banco agnóstico também.
 - Outro motivo foi o fato de vir configurado _"out-of-the-box"_ com o Spring Boot.
-*Contras*
+
+**Contras**
+
 - Os testes de repositório precisam ter a anotação `@AutoConfigureTestDatabase(replace =  AutoConfigureTestDatabase.Replace.NONE)` de modo que o Liquibase aceite usar um DB sem ser o H2 embedded.
 
 #### Testcontainers vs H2
@@ -36,3 +42,6 @@ Os testes de serviços, a principio, não são testes Spring de modo a serem mai
 #### Fixtures
 A package de `br.com.stoom.fixtures` dentro dos testes tem como propósito facilitar a criação de alguns cenários / mocks para os testes.
 
+#### Fabric8 Docker Plugin
+A imagem docker é gerada pelo plugin da Fabric8 que fica configurado no POM do projeto. No momento do build da aplicação, o plugin gera uma nova versão da imagem.
+Idealmente criação e upload da imagem ficariam em um pipeline de CI/CD e o plugin não seria necessário mas, para facilitar o uso do projeto, optei por utilizar o plugin configurado com um Dockerfile, ou seja, para mudar o comportamento e remover o plugin basta removê-lo do POM e a imagem pode ser gerada a partir do comando `docker build -t stoom/stoom-test .` 
