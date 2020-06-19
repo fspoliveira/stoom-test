@@ -9,11 +9,11 @@ Requisitos de ambiente:
 
 Como executar:
 1. Para compilar o projeto e criar a imagem docker: `mvn clean install` ou `./mvnw clean install`;
-1. Após build processar com sucesso, basta executar um `docker-compose up`.
+1. Após build processar com sucesso, basta executar um `docker-compose up` que irão subir banco, redis e aplicação.
+
+Coleções do Postman: na pasta `postman` temos as coleções e um environment com os cenários básicos de teste. 
 
 ## Decisões técnicas e _Trade Offs_
-
-#### 
 
 #### Spring Data JPA vs JDBC Template
 Embora ambos sejam fáceis de configurar com o Spring, e o JDBC Template seja mais rápido no que diz respeito a performance o volume de código para criar um simples CRUD com o JDBC Template seria maior, também deixaria a aplicação mais acoplada à um único banco de dados.
@@ -44,4 +44,8 @@ A package de `br.com.stoom.fixtures` dentro dos testes tem como propósito facil
 
 #### Fabric8 Docker Plugin
 A imagem docker é gerada pelo plugin da Fabric8 que fica configurado no POM do projeto. No momento do build da aplicação, o plugin gera uma nova versão da imagem.
-Idealmente criação e upload da imagem ficariam em um pipeline de CI/CD e o plugin não seria necessário mas, para facilitar o uso do projeto, optei por utilizar o plugin configurado com um Dockerfile, ou seja, para mudar o comportamento e remover o plugin basta removê-lo do POM e a imagem pode ser gerada a partir do comando `docker build -t stoom/stoom-test .` 
+Idealmente criação e upload da imagem ficariam em um pipeline de CI/CD e o plugin não seria necessário mas, para facilitar o uso do projeto, optei por utilizar o plugin configurado com um Dockerfile, ou seja, para mudar o comportamento e remover o plugin basta removê-lo do POM e a imagem pode ser gerada a partir do comando `docker build -t stoom/stoom-test .`
+
+#### Redis
+Utilizei uma instância do redis para cachear a resposta do google pois durantes os testes a API se mostrou um pouco lenta, contudo, utilizando através do postman não senti tanto impacto na performance. De todo modo, uma vez que está configurado a aplicação faz o cache do dado recuperado no google por 10 minutos antes que ele seja automaticamente apagado.
+ 
