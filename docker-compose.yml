@@ -1,6 +1,22 @@
 version: "3.4"
 
+networks: 
+  localnet:
+
 services: 
+
+  stoomService:
+    image: stoom/stoom-test:latest
+    ports:
+      - "8080:8080"
+    environment: 
+      - DB_URL=jdbc:postgresql://database:5432/postgres?loggerLevel=OFF
+      - DB_USER=stoom
+      - DB_PASS=stoom
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks: 
+      - localnet
 
   database:
     image: postgres:latest
@@ -11,11 +27,15 @@ services:
       - POSTGRES_USER=stoom
     volumes:
       - postgresql-volume:/var/lib/postgresql/data
+    networks: 
+      - localnet
 
   redis:
     image: redis:latest
     ports: 
       - "6379:6379"
+    networks: 
+      - localnet
 
 volumes:
   postgresql-volume:
