@@ -2,6 +2,7 @@ package br.com.stoom.repository;
 
 import br.com.stoom.configuration.PostgresDatabaseContainer;
 import br.com.stoom.entity.Address;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,11 @@ class AddressRepositoryTest {
     @Container
     private static final PostgresDatabaseContainer POSTGRES_DATABASE_CONTAINER =
         PostgresDatabaseContainer.getInstance();
+
+    @BeforeEach
+    public void setUp() {
+        repository.deleteAll();
+    }
 
     @Test
     @DisplayName("Save address in database")
