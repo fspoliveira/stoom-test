@@ -1,4 +1,4 @@
-package br.com.stoom.google.service;
+package br.com.stoom.exception;
 
 public class InvalidAddressInformation extends IllegalArgumentException {
 

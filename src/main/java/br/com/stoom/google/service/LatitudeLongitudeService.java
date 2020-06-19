@@ -2,6 +2,7 @@ package br.com.stoom.google.service;
 
 import br.com.stoom.configuration.GoogleGeocodingApiProperties;
 import br.com.stoom.entity.Address;
+import br.com.stoom.exception.InvalidAddressInformation;
 import br.com.stoom.google.service.model.GeocodingResponse;
 import br.com.stoom.google.service.model.Geometry;
 import br.com.stoom.google.service.model.Result;
