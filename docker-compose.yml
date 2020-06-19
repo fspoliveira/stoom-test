@@ -1,0 +1,22 @@
+version: "3.4"
+
+services: 
+
+  database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=stoom
+      - POSTGRES_USER=stoom
+    volumes:
+      - postgresql-volume:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    ports: 
+      - "6379:6379"
+
+volumes:
+  postgresql-volume:
+    external: true

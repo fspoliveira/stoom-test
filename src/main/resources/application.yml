@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    default-schema: public
+  redis:
+    host: ${REDIS_HOST:locahost}
+    port: ${REDIS_PORT:6379}
+  cache:
+    type: REDIS
+    redis:
+      time-to-live: 600000
+  jackson:
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+
+  output:
+    ansi:
+      enabled: ALWAYS
+
+stoom:
+  google:
+    api:
+      api-key: AIzaSyBm3xh9oZP1ksMWcMzVaZQevWlrtb8tIgc
+      base-url: https://maps.googleapis.com/maps/api/geocode/json

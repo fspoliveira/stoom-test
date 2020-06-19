@@ -1,0 +1,63 @@
+databaseChangeLog:
+    - changeSet:
+        id: 1
+        author: Matheus Silva
+        comment: "First database version"
+        changes:
+            - createTable:
+                tableName: address
+                columns:
+                    - column:
+                        name: id
+                        type: uuid
+                        constraints:
+                            primaryKey: true
+                            nullable: false
+                    - column:
+                        name: street_name
+                        type: varchar(1500)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: number
+                        type: int
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: complement
+                        type: varchar(500)
+                    - column:
+                        name: neighbourhood
+                        type: varchar(500)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: city
+                        type: varchar(100)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: state
+                        type: varchar(500)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: country
+                        type: varchar(300)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: zipcode
+                        type: varchar(300)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: latitude
+                        type: varchar(10)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: longitude
+                        type: varchar(10)
+                        constraints:
+                            nullable: false
