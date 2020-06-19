@@ -19,8 +19,10 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static br.com.stoom.entity.Address.fromModel;
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequestMapping("/api/address")
@@ -40,8 +42,10 @@ public class AddressController {
     }
 
     @GetMapping(params = {"field", "value"})
-    public ResponseEntity<List<Address>> getAddressByField(@RequestParam(name = "field") String field, @RequestParam(name = "value") String value) {
-        return ResponseEntity.ok(addressService.findBy(field, value));
+    public ResponseEntity<List<AddressModel>> getAddressByField(@RequestParam(name = "field") String field, @RequestParam(name = "value") String value) {
+        return ResponseEntity.ok(addressService.findBy(field, value).stream()
+            .map(Address::toModel)
+            .collect(toList()));
     }
 
     @DeleteMapping("/{id}")

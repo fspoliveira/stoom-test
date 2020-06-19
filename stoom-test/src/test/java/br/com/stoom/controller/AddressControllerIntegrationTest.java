@@ -153,6 +153,24 @@ class AddressControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("[Read] Testing the find address by specific field flow with empty datase")
+    public void whenIQueryForAddressesBySpecificField_witAnEmptyDataser_thenItShould200() throws Exception {
+        // Set up
+        // Given a simple GET request
+        String responseBody = mockMvc.perform(get("/api/address").queryParam("field", "city")
+            .queryParam("value", "Some")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        // Then it should return
+        List<AddressModel> addressModel = objectMapper.readValue(responseBody, new TypeReference<List<AddressModel>>() {
+        });
+        assertThat(addressModel).hasSize(0);
+    }
+
+    @Test
     @DisplayName("[Read] Testing the find address by invalid field flow")
     public void whenIQueryForAddressesByIdWithInvalidField_thenItShouldReturnInternalServerErrorWithMessage() throws
                                                                                                               Exception {
@@ -167,7 +185,7 @@ class AddressControllerIntegrationTest {
         // Then it should return
         ErrorModel addressModel = objectMapper.readValue(responseBody, ErrorModel.class);
         assertThat(addressModel).extracting(ErrorModel::getMessage)
-            .isEqualTo("Invalid field name passed in query string!");
+            .isEqualTo("Invalid field name passed in query string! The possible values are [zipcode, streetName, city, latitude, longitude, country, neighbourhood, number, state, complement]. Bear in mind that it is case sensitive.");
     }
 
     @Test

@@ -18,16 +18,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {AddressNotFoundInDatabaseException.class, EmptyResultDataAccessException.class})
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorModel.builder().message("Address not found").build(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        return handleExceptionInternal(
+            ex,
+            ErrorModel.builder().message("Address not found").build(),
+            new HttpHeaders(),
+            HttpStatus.NOT_FOUND,
+            request);
     }
 
     @ExceptionHandler(value = {GoogleApiInvalidAddressInformation.class})
     protected ResponseEntity<Object> handleInvalidAddressSentToGoogle(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorModel.builder().message("Invalid Address data!").build(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(
+            ex,
+            ErrorModel.builder().message("Invalid Address data!").build(),
+            new HttpHeaders(),
+            HttpStatus.BAD_REQUEST,
+            request);
     }
 
     @ExceptionHandler(value = {InvalidDataAccessApiUsageException.class})
     protected ResponseEntity<Object> invalidQueryStringField(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorModel.builder().message("Invalid field name passed in query string!").build(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(
+            ex,
+            ErrorModel.builder()
+                .message("Invalid field name passed in query string! The possible values are [zipcode, streetName, city, latitude, longitude, country, neighbourhood, number, state, complement]. Bear in mind that it is case sensitive.")
+                .build(),
+            new HttpHeaders(),
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            request);
     }
 }

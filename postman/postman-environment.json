@@ -1,0 +1,16 @@
+{
+  "id": "684a234e-abb5-a1fd-e685-41b47af8cb81",
+  "name": "Stoom Test",
+  "values": [
+    {
+      "enabled": true,
+      "key": "ADDRESS_ID",
+      "value": "1af1d903-ebf7-4c6a-9c59-0abfdc1dbe8d",
+      "type": "text"
+    }
+  ],
+  "timestamp": 1592570821741,
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2020-06-19T12:49:18.317Z",
+  "_postman_exported_using": "Postman/5.5.5"
+}

@@ -32,7 +32,7 @@ public class LatitudeLongitudeService {
         this.apiProperties = apiProperties;
     }
 
-    @Cacheable
+    @Cacheable(value = "findLatitudeAndLongitude", key = "#address.hashedObject()")
     public Address findLatitudeAndLongitude(Address address) {
         String formatedAddress = formatAddress(address);
         GeocodingResponse geocodingResponseEntity = consumeGoogleApi(formatedAddress);

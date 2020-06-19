@@ -12,6 +12,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +22,7 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class Address {
+public class Address implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -70,6 +73,10 @@ public class Address {
             .state(this.state)
             .complement(this.complement)
             .build();
+    }
+
+    public String hashedObject() throws NoSuchAlgorithmException {
+        return new String(MessageDigest.getInstance("MD5").digest(this.toString().getBytes()));
     }
 }
 
