@@ -8,7 +8,7 @@ Requisitos de ambiente:
 1. Plugin do Lombok instalado na IDE
 
 Como executar:
-1. Para compilar o projeto e criar a imagem docker: `mvn clean install`;
+1. Para compilar o projeto e criar a imagem docker: `mvn clean install` ou `./mvnw clean install`;
 1. Após build processar com sucesso, basta executar um `docker-compose up`.
 
 ## Decisões técnicas e _Trade Offs_
