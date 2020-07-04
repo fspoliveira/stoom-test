@@ -39,7 +39,7 @@ public class AddressController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AddressModel> getAddressById(@PathVariable("id") String id) {
-        log.info("Finding Addres with id {}", id);
+        log.info("Finding Address with id {}", id);
         return ResponseEntity.ok(addressService.findById(UUID.fromString(id)).toModel());
     }
 

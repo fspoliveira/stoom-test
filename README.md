@@ -52,4 +52,17 @@ Idealmente criação e upload da imagem ficariam em um pipeline de CI/CD e o plu
 
 #### Redis
 Utilizei uma instância do redis para cachear a resposta do google pois durantes os testes a API se mostrou um pouco lenta, contudo, utilizando através do postman não senti tanto impacto na performance. De todo modo, uma vez que está configurado a aplicação faz o cache do dado recuperado no google por 10 minutos antes que ele seja automaticamente apagado.
- 
+
+#### Elastic Stack
+Adicionado o elasticstack para monitoramento dos logs. Todo log está sendo enviado para STDOUT passando através de uma instância do `LogstashEncoder`, dessa forma o log é exposto em forma de JSON.
+Esse log é capturado por uma instâcia do filebeat que monitora o console de logs do container do Docker e envia para o Logstash que, por sua vez, faz uma trasnformação garantindo um ID único baseado no texto da mensagem + o timestamp isso é feito para evitar duplicidades nas entradas dos logs.
+
+* As configurações de leitura do log ficam em `./filebeat/filebeat.docker.yml`
+* As configurações do logstash ficam em `./logstash/pipeline/logstash.conf`
+
+A ideia é facilitar a leitura do log a partir do console e levar a aplicação para um ambiente em `k8s` sem que exista a necessidade de deploy de um agent em todos os pods e serviços que fique monitrando o sistema de arquivos.
+
+#### Trace de processamento
+A classe `TransactionIdFilter` é responsável por recuperar o ID enviado nos header `Stoom-Service-tid` que chegam ao Controller.
+Esse ID, idealmente, é gerado pelo front e o filtro persiste esse ID no contexto do `MDC` que é logado como atributo do JSON gerado pelo `LogstashEncoder` e todas as mensagens logadas pelo contexto do processamento contém o mesmo ID, facilitando, então, trace do processamento.
+O `tid` é um cabeçalho obrigatório e não é gerado pelo backend para que, caso o processo chame múltiplas API's do mesmo serviço, o `tid` fique como único.

@@ -25,6 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 import java.util.UUID;
 
+import static br.com.stoom.util.Constants.TRANSACTION_ID_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -68,7 +69,8 @@ class AddressControllerIntegrationTest {
         // Set up
         Address address = AddressFixture.createSimpleData(repository);
         // Given a simple GET request
-        String responseBody = mockMvc.perform(get("/api/address").contentType(MediaType.APPLICATION_JSON))
+        String responseBody = mockMvc.perform(get("/api/address").contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -85,7 +87,8 @@ class AddressControllerIntegrationTest {
     @DisplayName("[Read] Testing the find all addresses flow returning empty")
     public void whenIQueryForAllAddressesOnAEmptyDataSet_thenItShouldReturnEmptyResponse() throws Exception {
         // Given a simple GET request
-        String responseBody = mockMvc.perform(get("/api/address").contentType(MediaType.APPLICATION_JSON))
+        String responseBody = mockMvc.perform(get("/api/address").contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -103,15 +106,17 @@ class AddressControllerIntegrationTest {
         Address address = AddressFixture.createSimpleData(repository);
         // Given a simple GET request
         String responseBody =
-            mockMvc.perform(get("/api/address/" + address.getId().toString()).contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(get("/api/address/" + address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
+                .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
         // Then it should return
         AddressModel addressModel = objectMapper.readValue(responseBody, AddressModel.class);
-        assertThat(addressModel)
-            .extracting(AddressModel::getCity, AddressModel::getLatitude, AddressModel::getLongitude)
+        assertThat(addressModel).extracting(AddressModel::getCity,
+            AddressModel::getLatitude,
+            AddressModel::getLongitude)
             .contains("Some City", "-22.877083", "-47.048379");
     }
 
@@ -120,7 +125,8 @@ class AddressControllerIntegrationTest {
     public void whenIQueryForAddressesByIdWithInvalidId_thenItShouldReturnNotFoundWithError() throws Exception {
         // Given a simple GET request
         String responseBody =
-            mockMvc.perform(get("/api/address/" + UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(get("/api/address/" + UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON)
+                .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound())
                 .andReturn()
                 .getResponse()
@@ -139,7 +145,8 @@ class AddressControllerIntegrationTest {
         // Given a simple GET request
         String responseBody = mockMvc.perform(get("/api/address").queryParam("field", "city")
             .queryParam("value", "Some")
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -159,7 +166,8 @@ class AddressControllerIntegrationTest {
         // Given a simple GET request
         String responseBody = mockMvc.perform(get("/api/address").queryParam("field", "city")
             .queryParam("value", "Some")
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -177,7 +185,8 @@ class AddressControllerIntegrationTest {
         // Given a simple GET request
         String responseBody = mockMvc.perform(get("/api/address").queryParam("field", "invalidField")
             .queryParam("value", "Some")
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
             .andExpect(status().isInternalServerError())
             .andReturn()
             .getResponse()
@@ -185,7 +194,8 @@ class AddressControllerIntegrationTest {
         // Then it should return
         ErrorModel addressModel = objectMapper.readValue(responseBody, ErrorModel.class);
         assertThat(addressModel).extracting(ErrorModel::getMessage)
-            .isEqualTo("Invalid field name passed in query string! The possible values are [zipcode, streetName, city, latitude, longitude, country, neighbourhood, number, state, complement]. Bear in mind that it is case sensitive.");
+            .isEqualTo(
+                "Invalid field name passed in query string! The possible values are [zipcode, streetName, city, latitude, longitude, country, neighbourhood, number, state, complement]. Bear in mind that it is case sensitive.");
     }
 
     @Test
@@ -194,7 +204,8 @@ class AddressControllerIntegrationTest {
         // Given a simple GET request
         String responseBody = mockMvc.perform(delete("/api/address/" +
                                                      UUID.randomUUID()
-                                                         .toString()).contentType(MediaType.APPLICATION_JSON))
+                                                         .toString()).contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
             .andExpect(status().isNotFound())
             .andReturn()
             .getResponse()
@@ -210,7 +221,8 @@ class AddressControllerIntegrationTest {
         Address address = AddressFixture.createSimpleData(repository);
         // Given a simple GET request
         String responseBody =
-            mockMvc.perform(delete("/api/address/" + address.getId()).contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(delete("/api/address/" + address.getId()).contentType(MediaType.APPLICATION_JSON)
+                .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString()))
                 .andExpect(status().isNoContent())
                 .andReturn()
                 .getResponse()
@@ -222,6 +234,7 @@ class AddressControllerIntegrationTest {
     public void whenIPostAValidAddress_thenItShouldReturn201() throws Exception {
         AddressModel addressModel = realAddressModel();
         mockMvc.perform(post("/api/address").contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
             .content(objectMapper.writeValueAsString(addressModel)))
             .andExpect(status().isCreated())
             .andExpect(header().exists("Location"));
@@ -234,6 +247,7 @@ class AddressControllerIntegrationTest {
     public void whenIPostAnAddress_withMandatoryFieldEmpty_thenItShouldReturn400() throws Exception {
         AddressModel addressModel = realAddressModel().toBuilder().streetName(null).build();
         mockMvc.perform(post("/api/address").contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
             .content(objectMapper.writeValueAsString(addressModel))).andExpect(status().isBadRequest());
     }
 
@@ -242,6 +256,7 @@ class AddressControllerIntegrationTest {
     public void whenIPostAnAddress_withoutLatLon_thenItShouldReturn201_andFetchFromGoogle() throws Exception {
         AddressModel addressModel = realAddressModel();
         mockMvc.perform(post("/api/address").contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
             .content(objectMapper.writeValueAsString(addressModel.toBuilder().latitude(null).longitude(null).build())))
             .andExpect(status().isCreated())
             .andExpect(header().exists("Location"));
@@ -255,6 +270,7 @@ class AddressControllerIntegrationTest {
     public void whenIPostAnAddress_withoutLatLonAndInvalidAddressData_thenItShouldReturn400() throws Exception {
         AddressModel addressModel = AddressFixture.aSimpleAddress().toModel();
         mockMvc.perform(post("/api/address").contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
             .content(objectMapper.writeValueAsString(addressModel.toBuilder()
                 .streetName("invalidStreetName")
                 .latitude(null)
@@ -266,9 +282,9 @@ class AddressControllerIntegrationTest {
     @DisplayName("[Update] Testing the update address with invalid id")
     public void whenIUpdateAnAddress_withInvalidId_thenItShouldReturn404() throws Exception {
         AddressModel addressModel = realAddressModel();
-        mockMvc.perform(put("/api/address/"+UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(addressModel)))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(put("/api/address/" + UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
+            .content(objectMapper.writeValueAsString(addressModel))).andExpect(status().isNotFound());
     }
 
     @Test
@@ -276,7 +292,8 @@ class AddressControllerIntegrationTest {
     public void whenIUpdateAnAddress_withMandatoryFieldEmpty_thenItShouldReturn400() throws Exception {
         Address address = repository.save(AddressFixture.aSimpleAddress());
         AddressModel addressModel = realAddressModel();
-        mockMvc.perform(put("/api/address/"+address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/address/" + address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
             .content(objectMapper.writeValueAsString(addressModel.toBuilder().zipcode(null).build())))
             .andExpect(status().isBadRequest());
     }
@@ -286,12 +303,12 @@ class AddressControllerIntegrationTest {
     public void whenIUpdateAnAddress_withValidData_withoutLatLon_thenItShouldReturn200() throws Exception {
         Address address = repository.save(AddressFixture.aSimpleAddress());
         AddressModel addressModel = realAddressModel();
-        mockMvc.perform(put("/api/address/"+address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/address/" + address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
             .content(objectMapper.writeValueAsString(addressModel.toBuilder().latitude(null).build())))
             .andExpect(status().isOk());
         String latitude = repository.findAll().stream().findFirst().map(Address::getLatitude).orElse(null);
-        assertThat(latitude)
-            .isNotNull();
+        assertThat(latitude).isNotNull();
     }
 
     @Test
@@ -299,9 +316,9 @@ class AddressControllerIntegrationTest {
     public void whenIUpdateAnAddress_withValidData_withLatLon_thenItShouldReturn200() throws Exception {
         Address address = repository.save(AddressFixture.aSimpleAddress());
         AddressModel addressModel = realAddressModel();
-        mockMvc.perform(put("/api/address/"+address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(addressModel)))
-            .andExpect(status().isOk());
+        mockMvc.perform(put("/api/address/" + address.getId().toString()).contentType(MediaType.APPLICATION_JSON)
+            .header(TRANSACTION_ID_HEADER, UUID.randomUUID().toString())
+            .content(objectMapper.writeValueAsString(addressModel))).andExpect(status().isOk());
     }
 
     private AddressModel realAddressModel() {
