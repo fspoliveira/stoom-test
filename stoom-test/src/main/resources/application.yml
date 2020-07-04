@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: stoom-test
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/postgres?loggerLevel=OFF}
     username: ${DB_USER:stoom}
@@ -11,7 +13,7 @@ spring:
   liquibase:
     default-schema: public
   redis:
-    host: ${REDIS_HOST:locahost}
+    host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
   cache:
     type: REDIS
@@ -30,3 +32,4 @@ stoom:
     api:
       api-key: AIzaSyBm3xh9oZP1ksMWcMzVaZQevWlrtb8tIgc
       base-url: https://maps.googleapis.com/maps/api/geocode/json
+  logstash: ${LOGSTASH:localhost}

@@ -6,6 +6,7 @@ import br.com.stoom.exception.GoogleApiInvalidAddressInformation;
 import br.com.stoom.google.service.model.GeocodingResponse;
 import br.com.stoom.google.service.model.Geometry;
 import br.com.stoom.google.service.model.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,6 +20,7 @@ import java.util.Objects;
 import static java.lang.String.format;
 
 @Service
+@Slf4j
 public class LatitudeLongitudeService {
 
     @Autowired
@@ -34,10 +36,12 @@ public class LatitudeLongitudeService {
 
     @Cacheable(value = "findLatitudeAndLongitude", key = "#address.hashedObject()")
     public Address findLatitudeAndLongitude(Address address) {
-        String formatedAddress = formatAddress(address);
-        GeocodingResponse geocodingResponseEntity = consumeGoogleApi(formatedAddress);
+        log.info("Lat/Lon not found in cache. Hitting google for it.");
+        String formattedAddress = formatAddress(address);
+        GeocodingResponse geocodingResponseEntity = consumeGoogleApi(formattedAddress);
         Pair<String, String> latitudeAndLongitude =
             getLatitudeAndLongitude(Objects.requireNonNull(geocodingResponseEntity));
+        log.info("Got {} from google", latitudeAndLongitude);
         return address.toBuilder()
             .latitude(latitudeAndLongitude.getLeft())
             .longitude(latitudeAndLongitude.getRight())

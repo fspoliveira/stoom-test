@@ -1,21 +1,24 @@
-version: "3.4"
+version: "3.5"
 
-networks: 
+networks:
   localnet:
 
-services: 
+services:
 
   stoomService:
     image: stoom/stoom-test:latest
     ports:
       - "8080:8080"
-    environment: 
+    environment:
       - DB_URL=jdbc:postgresql://database:5432/postgres?loggerLevel=OFF
       - DB_USER=stoom
       - DB_PASS=stoom
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    networks: 
+    labels:
+      filebeat_enabled: "true"
+      to_json_object: "true"
+    networks:
       - localnet
 
   database:
@@ -27,16 +30,71 @@ services:
       - POSTGRES_USER=stoom
     volumes:
       - postgresql-volume:/var/lib/postgresql/data
-    networks: 
+    networks:
       - localnet
 
   redis:
     image: redis:latest
-    ports: 
+    ports:
       - "6379:6379"
-    networks: 
+    networks:
+      - localnet
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+    environment:
+      discovery.type: single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elastic-volume:/usr/share/elasticsearch/data:rw
+    networks:
+      - localnet
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.2
+    ports:
+      - "5601:5601"
+    environment:
+      elasticsearch.hosts: http://elasticsearch:9200
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+    networks:
+      - localnet
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.5.2
+    ports:
+      - "25826:25826"
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      monitoring.elasticsearch.hosts: http://elasticsearch:9200
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+    networks:
+      - localnet
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.5.2
+    user: root
+    volumes:
+      - ./filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: ["--strict.perms=false"]
+    depends_on:
+      - logstash
+    networks:
       - localnet
 
 volumes:
   postgresql-volume:
+    external: true
+  elastic-volume:
     external: true

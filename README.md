@@ -5,7 +5,11 @@ Requisitos de ambiente:
 1. Docker e docker-compose instalados;
 1. Maven 3.6+ para build;
 1. Configurar o volume do banco de dados: (`docker volume create postgresql-volume`)
+1. Configurar o volume do elasticsearch: (`docker volume create elastic-volume`)
 1. Plugin do Lombok instalado na IDE
+
+***É importante notar que o docker deve ser instalado com o guide oficial. A instalação via Snap pode causar alguns 
+erros de permissão.***
 
 Como executar:
 1. Para compilar o projeto e criar a imagem docker: `mvn clean install` ou `./mvnw clean install`;

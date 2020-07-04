@@ -4,8 +4,7 @@ import br.com.stoom.entity.Address;
 import br.com.stoom.exception.AddressNotFoundInDatabaseException;
 import br.com.stoom.google.service.LatitudeLongitudeService;
 import br.com.stoom.repository.AddressRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +14,9 @@ import java.util.UUID;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
+@Slf4j
 public class AddressService {
 
-    private static final Logger log = LoggerFactory.getLogger(AddressService.class);
     private LatitudeLongitudeService latLonService;
     private AddressRepository repository;
 
